@@ -9,7 +9,9 @@ Emails: fcumlin@gmail.com, hopeliang990504@gmail.com
 
 Please see example in `example_inference.py`. This script can be used on single wav files, e.g.:
 ```
-python example_inference.py --wav_path 'path/to/audio_to_be_processed.wav' --model runs/multigauss/model.pt
+python example_inference.py \
+  --wav_path 'path/to/audio_to_be_processed.wav' \
+  --model runs/multigauss/model.pt
 ```
 
 ## Installation
