@@ -129,7 +129,8 @@ def main():
     )
     parser.add_argument(
         '--target_duration',
-        type=float, default=8.0,
+        type=float,
+        default=8.0,
         help='Target duration of the clips, in seconds.',
     )
     args = parser.parse_args()
