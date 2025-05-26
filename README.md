@@ -32,5 +32,5 @@ The framework is Gin configurable; specifying model and dataset is done with a G
 
 Example launch:
 ```
-python train.py --gin_path "configs/tot.gin" --save_path "runs/tot"
+python train.py --gin_path configs/tot.gin --save_path runs/tot
 ```
