@@ -43,7 +43,7 @@ class Audio:
         samples, rate = librosa.load(path)
         return cls(samples, rate)
 
-    def write_wav(self, path: str, dtype: str = 'float64'):
+    def write_wav(self, path: str, dtype: str = 'float64') -> None:
         sf.write(path, self._samples[:, 0], self._rate)
 
     def resample(self, target_sr: int) -> 'Audio':
