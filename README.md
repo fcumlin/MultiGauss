@@ -7,19 +7,25 @@ Emails: fcumlin@gmail.com, hopeliang990504@gmail.com
 
 ## Inference
 
-TODO
+Please see example in `example_inference.py`. This script can be used on single wav files, e.g.:
+```
+python example_inference.py --wav_path 'path/to/audio_to_be_processed.wav' --model runs/multigauss/model.pt
+```
 
 ## Installation
 
-Installation with pip:
-```
-pip install -r requirements.txt
-pip install torch==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
-```
+See `requirements.txt`.
 
 ## Dataset preparation
 
-[NISQA Corpus](https://github.com/gabrielmittag/NISQA/wiki/NISQA-Corpus)
+1. Download the NISQA dataset: [NISQA Corpus](https://github.com/gabrielmittag/NISQA/wiki/NISQA-Corpus)
+
+2. Run the preprocessing script `preprocess/generate_ssl_features.sh` to preprocess the NISQA datasets with wav2vec. Example:
+```
+./preprocess/generate_ssl_features.sh 'path/to/NISQA_Corpus'
+```
+
+Please note that the default configuration will only save the features from the 12th layer (index 11). Hence, other layers specified in the Gin configuration during training will not work. 
 
 ## Training
 The framework is Gin configurable; specifying model and dataset is done with a Gin config. See examples in `configs/*.gin`.
