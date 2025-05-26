@@ -1,17 +1,6 @@
 # Training config on VCC2018 dataset.
 
 # ------------------------------
-# STFT
-# ------------------------------
-stft:
-    win_length = 320
-    hop_length = 160
-    n_fft = 320
-    use_log = True
-    use_magnitude = True
-    n_mels = None
-
-# ------------------------------
 # Architecture
 # ------------------------------
 ProjectionHead:
