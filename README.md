@@ -14,7 +14,7 @@ python example_inference.py \
   --model runs/multigauss/model.pt
 ```
 
-## Installation
+## Dependencies
 
 See `requirements.txt`.
 
