@@ -36,7 +36,7 @@ class ProjectionHead(nn.Module):
             self,
             in_shape: tuple[int],
             conv_channels: Sequence[int] = (32, 32),
-            dense_neurons: Sequence[int] = (64, 32, 17),
+            dense_neurons: Sequence[int] = (64, 32, 20),
             use_poolings: Sequence[bool] = (True, True),
             use_normalizations: Sequence[bool] = (True, True),
             kernel_size: int = 5,
