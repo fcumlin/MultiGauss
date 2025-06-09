@@ -33,18 +33,48 @@ def _get_conv1d_layer(
 class ProjectionHead(nn.Module):
 
     def __init__(
-            self,
-            in_shape: tuple[int],
-            conv_channels: Sequence[int] = (32, 32),
-            dense_neurons: Sequence[int] = (64, 32, 20),
-            use_poolings: Sequence[bool] = (True, True),
-            use_normalizations: Sequence[bool] = (True, True),
-            kernel_size: int = 5,
-            pool_size: int = 5,
-            dropout_rate: float = 0.3,
-            linear_transform: bool = True,
-            device: str = 'cpu',
-            ):
+        self,
+        in_shape: tuple[int],
+        conv_channels: Sequence[int] = (32, 32),
+        dense_neurons: Sequence[int] = (64, 32, 20),
+        use_poolings: Sequence[bool] = (True, True),
+        use_normalizations: Sequence[bool] = (True, True),
+        kernel_size: int = 5,
+        pool_size: int = 5,
+        dropout_rate: float = 0.3,
+        linear_transform: bool = True,
+        device: str = 'cpu',
+    ):
+        """Neural-based projection head.
+
+        The model expects speech clip features produced by a SLL-based model,
+        e.g., wav2vec 2.0. Given a speech clip feature, the model predicts
+        a multidimensional distribution over the speech quality. The predicted
+        distribution is hard-coded to be of dimension five, meaning that
+        this model only works for 5-dimensional quality values (e.g., that
+        exists in the NISQA Corpus).
+
+        Args:
+            in_shape: The expected input shape. Should be of shape (D, T),
+                D is the number of features produced by the SSL, and T is
+                the 'time' dimension.
+            conv_channels: Specify the number of channels of each 1D convolution.
+                The dimension of `conv_channels` is the same as the number of
+                convolutions that will be used.
+            dense_neurons: Number of nodes for each dense layer. `dense_neurons[-1]`
+                is the output dimension. For multidimensional probabilistic model,
+                give it 20. For multidimensional non-probabilistic model, give it 5.
+                Values between 5-20 are also possible, but please change/look at the
+                code if experimenting.
+            use_poolings: If to use pooling layers. The dimension need to correspond
+                to the dimension of `conv_channels`.
+            use_normalizations: For each convolutional layer, if to use normalization.
+            kernel_size: Kernel size of the convolutions.
+            pool_size: Kernel size of the poolings.
+            dropout_rate: The dropout rate.
+            linear_transform: If to use linear transformation for unbiased estimator.
+            device: Device to use.
+        """
         super(ProjectionHead, self).__init__()
         assert len(dense_neurons) == 3
         assert len(conv_channels) == len(use_poolings)
