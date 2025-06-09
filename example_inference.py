@@ -65,8 +65,10 @@ def main():
     # Process the waveform with SSL model.
     bundle = torchaudio.pipelines.WAV2VEC2_XLSR_2B
     ssl_model = bundle.get_model().to(device=device)
-    features, _ = ssl_model.extract_features(waveform)
-    feature = features[args.ssl_model_layer].squeeze().T
+    ssl_model.eval()
+    with torch.no_grad():
+        features, _ = ssl_model.extract_features(waveform)
+        feature = features[args.ssl_model_layer].squeeze().T
     
     # Load the MultiGauss model and perform inference.
     multigauss_model = torch.jit.load(
