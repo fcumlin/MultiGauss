@@ -233,22 +233,13 @@ class TrainingLoop:
         """Evaluates the model on validation data."""
         self._evaluate(self._valid_loaders, 'Valid')
     
-    def test(self, plot: bool = False) -> None:
+    def test(self) -> None:
         """Evaluates the model on test data."""
         self._model = torch.jit.load(
             os.path.join(self._save_path, 'model_best.pt')
         ).to(self._device)
         self._evaluate(self._valid_loaders, 'Test')
         predictions, labels = self._evaluate(self._test_loaders, 'Test')
-        if plot:
-            plt.scatter(labels['mos'], predictions['mos'])
-            plt.xlim([0.9, 5.1])
-            plt.ylim([0.9, 5.1])
-            plt.xlabel('MOS')
-            plt.ylabel('Predictions')
-            plt.title('Test data predictions vs targets')
-            plt.savefig(os.path.join(self._save_path, 'test_scatter.png'))
-            plt.close()
 
     def save_model(self, model_name: str = 'model.pt') -> None:
         """Saves the model."""
@@ -292,7 +283,7 @@ def main():
     new_gin_path = os.path.join(train_loop.save_path, 'config.gin')
     shutil.copyfile(args.gin_path, new_gin_path)
     train_loop.train()
-    train_loop.test(plot=True)
+    train_loop.test()
 
 
 if __name__ == '__main__':
