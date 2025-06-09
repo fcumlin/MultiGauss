@@ -22,7 +22,7 @@ for dataset in \
 do
     python "generate_ssl_features.py" \
         --model_name "w2v2_xlsr_2b" \
-        --data_dir "$base_dir/$dataset/deg" \
+        --wav_dir "$base_dir/$dataset/deg" \
         --target_duration 10 \
         --layers 11 
     
