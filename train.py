@@ -28,7 +28,7 @@ def _multivariate_gnll_loss(
 ) -> torch.Tensor:
     """Computes the multivariate Gaussian negative log-likelihood loss."""
     variance_loss = torch.maximum(
-        torch.logdet(covariance), torch.tensor(eps, device=device=device)
+        torch.logdet(covariance), torch.tensor(eps, device=device)
     )
     diff = (means - targets).unsqueeze(-1)
     mean_loss = torch.transpose(diff, 1, 2) @ torch.inverse(covariance) @ diff
@@ -47,7 +47,7 @@ class TrainingLoop:
         loss_type: str = 'mgnll',
         optimizer: torch.optim.Optimizer = torch.optim.Adam,
         weight_decay: float = 0.0,
-        dataset_cls: torch.utils.dataset.Dataset = dataset_lib.NisqaFeatures,
+        dataset_cls: torch.utils.data.dataset.Dataset = dataset_lib.NisqaFeatures,
         num_epochs: int = 500,
         learning_rate: float = 1e-4,
         batch_size_train: int = 64,
@@ -86,7 +86,6 @@ class TrainingLoop:
                 ))
             return dataloaders
         train_dataset = dataset_cls_partial(dataset_name='train')
-        self._label_type = train_dataset.label_type
         self._train_loader = dataset_lib.get_dataloader(
             dataset=train_dataset,
             batch_size=batch_size_train
@@ -245,7 +244,7 @@ class TrainingLoop:
             plt.scatter(labels['mos'], predictions['mos'])
             plt.xlim([0.9, 5.1])
             plt.ylim([0.9, 5.1])
-            plt.xlabel(self._label_type)
+            plt.xlabel('MOS')
             plt.ylabel('Predictions')
             plt.title('Test data predictions vs targets')
             plt.savefig(os.path.join(self._save_path, 'test_scatter.png'))
@@ -270,6 +269,7 @@ def main():
         '--save_path',
         type=str,
         help='Path to directory storing results.',
+        required=True,
     )
     parser.add_argument(
         '--layer',
