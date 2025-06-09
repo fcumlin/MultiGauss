@@ -1,3 +1,18 @@
+r"""Script for running MultiGauss inference on single wav files.
+
+The input wav file is expected to be around 10 s of duration. The model
+operates at 16 kHz sample rate, hence, all audio is resampled to 16 kHz
+before processing. Note that this implies no energy with frequencies
+above 8 kHz are seen by the model.
+
+Example run:
+```
+python example_inference.py \
+  --wav_path 'path/to/audio_to_be_processed.wav' \
+  --model runs/multigauss/model.pt
+```
+"""
+
 import argparse
 
 import torch
@@ -24,34 +39,34 @@ def _optionally_resample_audio(
 
 
 def main():
-    argparser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description="Test inference with a pre-trained Wav2Vec2 model."
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--wav_path",
         type=str,
         required=True,
         help="Path to the WAV file to be processed.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--model",
         type=str,
         required=True,
         help="Path to MultiGauss model.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--ssl_model_layer",
         type=int,
         default=11,
         help="The layer of the SSL model to extract the feature from.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--device",
         type=str,
         default="cpu",
         help="Device to run the model on (e.g., 'cpu' or 'cuda').",
     )
-    args = argparser.parse_args()
+    args = parser.parse_args()
     device = torch.device(args.device)
 
     # Read and preprocess the WAV file.
