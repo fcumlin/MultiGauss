@@ -52,7 +52,7 @@ class NisqaFeatures(torch.utils.data.dataset.Dataset):
             ))
             self._num_samples = len(self._df)
             labels_sim = self._load_labels()
-            clips_sim = self._load_clips()
+            clips_sim = self._load_features()
             self._df = pd.read_csv(os.path.join(
                 data_path,
                 'NISQA_TRAIN_LIVE',
@@ -60,7 +60,7 @@ class NisqaFeatures(torch.utils.data.dataset.Dataset):
             ))
             self._num_samples = len(self._df)
             labels_live = self._load_labels()
-            clips_live = self._load_clips()
+            clips_live = self._load_features()
             self._labels = pd.concat(
                 [labels_sim, labels_live]
             )[self._label_names]
@@ -126,7 +126,7 @@ class NisqaFeatures(torch.utils.data.dataset.Dataset):
 
 @gin.configurable
 def get_dataloader(
-    dataset: torch.utils.dataset.Dataset,
+    dataset: torch.utils.data.dataset.Dataset,
     batch_size: int,
     num_workers: int,
     shuffle: bool,
