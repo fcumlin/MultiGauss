@@ -69,7 +69,11 @@ def main():
     feature = features[args.ssl_model_layer].squeeze().T
     
     # Load the MultiGauss model and perform inference.
-    multigauss_model = torch.jit.load(args.model, map_location=device)
+    multigauss_model = torch.jit.load(
+        args.model,
+        map_location=device,
+        weights_only=True,
+    )
     multigauss_model.eval()
     with torch.no_grad():
         feature = feature.unsqueeze(0)  # Add batch dimension.
