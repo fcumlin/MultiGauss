@@ -72,7 +72,6 @@ def main():
     multigauss_model = torch.jit.load(
         args.model,
         map_location=device,
-        weights_only=True,
     )
     multigauss_model.eval()
     with torch.no_grad():
