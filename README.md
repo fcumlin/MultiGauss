@@ -32,7 +32,7 @@ Please note that the default configuration will only save the features from the 
 ## Training
 The framework is Gin configurable; specifying model and dataset is done with a Gin config. See examples in `configs/*.gin`.
 
-1. Set `dataset.NisqaFeatures.data_path` to the folder of the NISQA Corpus. Should be similar to `path/to/datasets/NISQA_Corpus`.
+1. Set `dataset.NisqaFeatures.data_path` to the folder of the NISQA Corpus (either in the Gin config or default in the dataset library). Should be similar to `path/to/datasets/NISQA_Corpus`.
 
 2. Launch a training with a specified Gin config.
 
