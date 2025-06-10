@@ -18,6 +18,8 @@ import argparse
 import torch
 import torchaudio
 
+import model as model_lib
+
 
 def _read_wav(file_path: str)-> tuple[torch.Tensor, int]:
     """Reads a WAV file and returns the waveform and sample rate."""
@@ -49,7 +51,7 @@ def main():
         help="Path to the WAV file to be processed.",
     )
     parser.add_argument(
-        "--model",
+        "--model_path",
         type=str,
         required=True,
         help="Path to MultiGauss model.",
@@ -86,10 +88,13 @@ def main():
         feature = features[args.ssl_model_layer].squeeze().T
     
     # Load the MultiGauss model and perform inference.
-    multigauss_model = torch.jit.load(
-        args.model,
+    multigauss_model = model_lib.ProjectionHead()
+    state_dict = torch.load(
+        args.model_path,
         map_location=device,
+        weights_only=True
     )
+    multigauss_model.load_state_dict(state_dict)
     multigauss_model.eval()
     with torch.no_grad():
         feature = feature.unsqueeze(0)  # Add batch dimension.
