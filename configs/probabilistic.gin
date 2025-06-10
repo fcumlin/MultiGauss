@@ -1,4 +1,4 @@
-# Training config on VCC2018 dataset.
+# Multivariate probabilistic NISQA training with full covariance estimation.
 
 # ------------------------------
 # Architecture
@@ -11,7 +11,7 @@ ProjectionHead:
     kernel_size = 5
     pool_size = 5
     dropout_rate = 0.3
-    linear_transform = True
+    apply_linear_transform = True
     
 # ------------------------------
 # Dataset
