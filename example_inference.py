@@ -9,7 +9,7 @@ Example run:
 ```
 python example_inference.py \
   --wav_path 'path/to/audio_to_be_processed.wav' \
-  --model runs/multigauss/model.pt
+  --model runs/probabilistic/model.pt
 ```
 """
 
