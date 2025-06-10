@@ -6,13 +6,10 @@ import shutil
 from typing import Sequence
 
 import gin
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-import scipy.stats as stats
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import tqdm
 
 import dataset as dataset_lib
@@ -24,11 +21,10 @@ def _multivariate_gnll_loss(
     targets: torch.Tensor,
     covariance: torch.Tensor,
     eps: float = 1e-6,
-    device: str = 'cpu'
 ) -> torch.Tensor:
     """Computes the multivariate Gaussian negative log-likelihood loss."""
     variance_loss = torch.maximum(
-        torch.logdet(covariance), torch.tensor(eps, device=device)
+        torch.logdet(covariance), torch.tensor(eps, device=means.device)
     )
     diff = (means - targets).unsqueeze(-1)
     mean_loss = torch.transpose(diff, 1, 2) @ torch.inverse(covariance) @ diff
@@ -104,7 +100,6 @@ class TrainingLoop:
             "cuda" if torch.cuda.is_available() else "cpu")
         logging.info(f'Device={self._device}')
         self._model = model(
-            device=self._device,
             in_shape=train_dataset.features_shape
         ).to(self._device)
         self._best_pcc = -1
@@ -117,10 +112,7 @@ class TrainingLoop:
         self._optimizer.zero_grad()
         self._loss_type = loss_type
         if loss_type == 'mgnll':
-            self._loss_fn = functools.partial(
-                _multivariate_gnll_loss,
-                device=self._device
-            )
+            self._loss_fn = _multivariate_gnll_loss
         elif loss_type == 'mse':
             self._loss_fn = nn.MSELoss()
         else:
@@ -223,7 +215,7 @@ class TrainingLoop:
                 utt_srcc = scipy.stats.spearmanr(target_cur, pred_cur)[0]
                 if utt_pcc > self._best_pcc and name == 'mos' and prefix == 'Valid':
                     self._best_pcc = utt_pcc
-                    self.save_model('model_best.pt')
+                    self.save_model('model_best_state_dict.pt')
                 logging.info(
                     f"\n[{dataloader.dataset.dataset_name}][{name}][{self._epoch}][UTT][ MSE = {utt_mse:.4f} | LCC = {utt_pcc:.4f} | SRCC = {utt_srcc:.4f} ]"
                 )
@@ -235,16 +227,21 @@ class TrainingLoop:
     
     def test(self) -> None:
         """Evaluates the model on test data."""
-        self._model = torch.jit.load(
-            os.path.join(self._save_path, 'model_best.pt')
-        ).to(self._device)
+        state_dict = torch.load(
+            os.path.join(self._save_path, 'model_best_state_dict.pt'),
+            map_location=self._device,
+            weights_only=True,
+        )
+        self._model.load_state_dict(state_dict)
         self._evaluate(self._valid_loaders, 'Test')
         predictions, labels = self._evaluate(self._test_loaders, 'Test')
 
     def save_model(self, model_name: str = 'model.pt') -> None:
         """Saves the model."""
-        model_scripted = torch.jit.script(self._model)
-        model_scripted.save(os.path.join(self._save_path, model_name))
+        torch.save(
+            self._model.state_dict(),
+            os.path.join(self._save_path, model_name)
+        )
 
 
 def main():
