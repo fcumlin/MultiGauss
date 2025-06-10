@@ -22,7 +22,7 @@ See `requirements.txt`.
 
 1. Download the NISQA dataset: [NISQA Corpus](https://github.com/gabrielmittag/NISQA/wiki/NISQA-Corpus)
 
-2. Run the preprocessing script `preprocess/generate_ssl_features.sh` to preprocess the NISQA datasets with wav2vec. Example:
+2. Run the preprocessing script `preprocess/generate_ssl_features.sh` to preprocess the NISQA datasets with wav2vec 2.0. Example:
 ```
 ./preprocess/generate_ssl_features.sh 'path/to/NISQA_Corpus'
 ```
@@ -32,7 +32,11 @@ Please note that the default configuration will only save the features from the 
 ## Training
 The framework is Gin configurable; specifying model and dataset is done with a Gin config. See examples in `configs/*.gin`.
 
+1. Set `dataset.NisqaFeatures.data_path` to the folder of the NISQA Corpus. Should be similar to `path/to/datasets/NISQA_Corpus`.
+
+2. Launch a training with a specified Gin config.
+
 Example launch:
 ```
-python train.py --gin_path configs/tot.gin --save_path runs/tot
+python train.py --gin_path configs/probabilistic.gin --save_path runs/multigauss_probabilistic
 ```
