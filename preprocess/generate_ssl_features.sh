@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-# Pass the base directory as the first argument, for the NISQA wav files, it
-# should be `path/to/dir/NISQA_Corpus`.
+# Pass the base directory to the NISQA Corpus as the first argument, it
+# should be of the form`path/to/datasets/NISQA_Corpus`.
 base_dir="$1"
 
 if [ -z "$base_dir" ]; then
