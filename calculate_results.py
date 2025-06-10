@@ -1,4 +1,11 @@
-"""Calculate the mean and std of results from multiple log files."""
+r"""Calculate the mean and std of results from multiple log files.
+
+Example usage:
+```
+python calculate_results.py \
+    --results_path 'runs/multivariate_fullcovariance_nisqa'
+```
+"""
 
 import argparse
 
@@ -25,14 +32,17 @@ def main():
     parser.add_argument(
         '--results_path',
         type=str,
-        help='Path to the results.',
+        help='Path to the folder containing the results. The results are ' \
+            'assumed to exist in {results_path}/train.log.',
         required=True,
     )
     parser.add_argument(
         '--n_array',
-        type=str,
-        help='Number of arrays.',
-        default=10
+        type=int,
+        help='Number of arrays, if trained several models of same ' \
+            'configuration. Results are assumed to exist in ' \
+            '{results_path}_{i}/train.log, where i=0,...,`n_array`-1.',
+        default=None,
     )
     args = parser.parse_args()
 
@@ -51,8 +61,12 @@ def main():
         mos_label: [] for mos_label in mos_labels
     } for dataset in datasets}
 
-    for i in range(args.n_array):
-        new_path = f'{args.results_path}_{i}/train.log'
+    n_array = args.n_array if args.n_array is not None else 1
+    for i in range(n_array):
+        if args.n_array is None:
+            new_path = f'{args.results_path}/train.log'
+        else:
+            new_path = f'{args.results_path}_{i}/train.log'
         with open(new_path, 'r') as f:
             for _, line in enumerate(f):
                 if '[31]' in line:
