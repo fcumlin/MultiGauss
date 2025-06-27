@@ -88,7 +88,7 @@ def main():
         feature = features[args.ssl_model_layer].squeeze().T
     
     # Load the MultiGauss model and perform inference.
-    multigauss_model = model_lib.ProjectionHead()
+    multigauss_model = model_lib.ProjectionHead(in_shape=feature.shape)
     state_dict = torch.load(
         args.model_path,
         map_location=device,
