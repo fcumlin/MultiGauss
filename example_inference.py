@@ -1,15 +1,13 @@
 r"""Script for running MultiGauss inference on single wav files.
 
-The input wav file is expected to be around 10 s of duration. The model
-operates at 16 kHz sample rate, hence, all audio is resampled to 16 kHz
-before processing. Note that this implies no energy with frequencies
+The model operates at 16 kHz sample rate and on signals of 10 s duration, hence,
+all audio is resampled to 16 kHz and repeated or cropped to 10 s before
+processing. Note that the sample rate implies that no energy with frequencies
 above 8 kHz are seen by the model.
 
 Example run:
 ```
-python example_inference.py \
-  --wav_path 'path/to/audio_to_be_processed.wav' \
-  --model runs/probabilistic/model.pt
+python example_inference.py --wav_path 'path/to/audio_to_be_processed.wav'
 ```
 """
 
@@ -40,6 +38,18 @@ def _optionally_resample_audio(
     return waveform
 
 
+def _repeat_and_crop_to_length(
+    waveform: torch.Tensor,
+    target_length: int = 160_000,
+) -> torch.Tensor:
+    """Repeates or crops the waveform to give it the target length."""
+    current_length = waveform.shape[-1]
+    if current_length < target_length:
+        num_repeats = target_length // current_length + 1
+        waveform = waveform.repeat(1, num_repeats)
+    return waveform[:, :target_length]
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Test inference with a pre-trained Wav2Vec2 model."
@@ -53,7 +63,7 @@ def main():
     parser.add_argument(
         "--model_path",
         type=str,
-        required=True,
+        default="runs/probabilistic/model_best_state_dict.pt",
         help="Path to MultiGauss model.",
     )
     parser.add_argument(
@@ -77,6 +87,10 @@ def main():
         waveform, sample_rate, target_sample_rate=16_000
     )
     waveform = waveform.mean(dim=0, keepdim=True)  # Convert to mono if stereo.
+    waveform = _repeat_and_crop_to_length(
+        waveform,
+        target_length=160_000,  # Training was done with 10 s of audio (16 kHz).
+    )
     waveform = waveform.to(device=device)
     
     # Process the waveform with SSL model.
