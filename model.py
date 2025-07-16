@@ -258,7 +258,7 @@ class ProjectionHead(nn.Module):
         if predictions.shape[-1] == 5:
             if self._apply_linear_transform:
                 return 2 * predictions + 3
-            return 2 * predictions + 3
+            return predictions
         
         # Probabilistic case.
         mean_predictions = predictions[:, :5]
